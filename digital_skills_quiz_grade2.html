@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>اختبار المهارات الرقمية - ثاني متوسط</title>
+<style>
+:root{font-family:Tahoma,Arial,sans-serif;color:#172033;background:#f4f7fb}
+*{box-sizing:border-box}
+body{margin:0;padding:18px}
+main{max-width:820px;margin:0 auto}
+header,.card{background:#fff;border:1px solid #e1e7f0;border-radius:18px;padding:22px;margin-bottom:16px;box-shadow:0 4px 16px #15254a0b}
+header{text-align:center;background:linear-gradient(135deg,#eaf4ff,#f8fbff)}
+h1{margin:0 0 8px;font-size:1.6rem;color:#174b83}
+.subtitle{color:#526178;line-height:1.8}
+.pills{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:12px}
+.pill{background:#e3efff;color:#174b83;border-radius:999px;padding:6px 12px;font-size:.9rem}
+label.field{display:block;font-weight:bold;margin:12px 0 6px}
+input[type=text]{width:100%;padding:13px;border:1px solid #cbd5e1;border-radius:10px;font:inherit}
+button{font:inherit;cursor:pointer;border:0;border-radius:10px;padding:13px 18px;background:#1769aa;color:white;font-weight:bold;width:100%;margin-top:12px}
+button.secondary{background:#edf2f7;color:#25364c}
+button:disabled{opacity:.5;cursor:not-allowed}
+.question{padding:18px 0;border-bottom:1px solid #e7ebf1}
+.question:last-child{border-bottom:0}
+.qtitle{font-weight:bold;line-height:1.8;margin-bottom:10px;white-space:pre-line}
+.option{display:flex;gap:9px;align-items:flex-start;padding:10px;border:1px solid #e1e7f0;border-radius:10px;margin:7px 0;cursor:pointer}
+.option input{margin-top:4px}
+code{direction:ltr;unicode-bidi:embed;background:#f1f5f9;padding:2px 5px;border-radius:4px}
+.result{text-align:center;background:#f5faff;border:1px solid #cfe3fb;border-radius:14px;padding:20px}
+.score{font-size:2.4rem;font-weight:bold;color:#1769aa}
+.feedback{background:#f5f7fa;border-radius:10px;padding:12px;margin-top:10px;line-height:1.7}
+.correct{color:#137547;font-weight:bold}.wrong{color:#b42318;font-weight:bold}
+.small{font-size:.9rem;color:#64748b;line-height:1.7}
+.hidden{display:none}
+</style>
+</head>
+<body>
+<main>
+<header>
+  <h1>اختبار المهارات الرقمية</h1>
+  <div><strong>الصف الثاني المتوسط</strong></div>
+  <div class="subtitle">المعاملات الشرطية والمنطقية، والجمل الشرطية، واتخاذ القرارات في بايثون</div>
+  <div class="pills"><span class="pill">10 أسئلة</span><span class="pill">10 درجات</span><span class="pill">تصحيح تلقائي</span></div>
+</header>
+
+<section class="card" id="identity">
+  <h2>بيانات الطالب</h2>
+  <p class="small">اكتب اسمك وفصلك قبل البدء.</p>
+  <label class="field" for="studentName">اسم الطالب</label>
+  <input id="studentName" type="text" autocomplete="name" placeholder="اكتب اسمك">
+  <label class="field" for="studentClass">الفصل</label>
+  <input id="studentClass" type="text" placeholder="مثال: ٢/٣ أو ٣/٢">
+  <button id="startBtn">ابدأ الاختبار</button>
+  <p class="small">تنبيه: هذه النسخة لا ترسل إجابات الطلاب إلى المعلم تلقائيًا.</p>
+</section>
+
+<section class="card hidden" id="quiz">
+  <div id="studentInfo" class="small"></div>
+  <p class="small">اختر إجابة واحدة لكل سؤال، ثم اضغط «إنهاء الاختبار».</p>
+  <form id="quizForm"><div id="questions"></div><button type="submit">إنهاء الاختبار وعرض النتيجة</button></form>
+</section>
+
+<section class="card hidden" id="results" aria-live="polite"></section>
+</main>
+<script>
+const qs = [
+{q:"ما ناتج التعبير 5 > 3 في بايثون؟",o:["True","False","5","خطأ برمجي"],a:0,e:"لأن العدد 5 أكبر من 3."},
+{q:"أي المعاملات التالية تتحقق عندما يكون الشرطان صحيحين؟",o:["or","not","and","!="],a:2,e:"المعامل and يتطلب تحقق الشرطين."},
+{q:"ما ناتج التعبير 4 == 4؟",o:["False","True","4","خطأ برمجي"],a:1,e:"المعامل == يقارن بين القيمتين، وهما متساويتان."},
+{q:"أي كلمة تُستخدم لتنفيذ بديل عند عدم تحقق شرط if؟",o:["for","while","else","def"],a:2,e:"تُنفذ else عندما لا يتحقق شرط if."},
+{q:"ما الناتج؟\nx = 7\nif x > 5:\n    print('نعم')\nelse:\n    print('لا')",o:["لا","نعم","7","لا يظهر شيء"],a:1,e:"قيمة x أكبر من 5، لذلك يُنفذ فرع if."},
+{q:"ما ناتج التعبير not (3 > 8)؟",o:["True","False","8","خطأ برمجي"],a:0,e:"التعبير 3 > 8 غير صحيح، وnot تعكس النتيجة."},
+{q:"ما معامل المقارنة الذي يعني «لا يساوي» في بايثون؟",o:["==","=","!=","<="],a:2,e:"يُستخدم != للتحقق من عدم تساوي قيمتين."},
+{q:"العبارة التالية نتيجتها True:\n6 > 2 and 4 < 1",o:["صح","خطأ"],a:1,e:"الشرط الثاني غير صحيح، لذا نتيجة and هي False."},
+{q:"ما الناتج؟\nx = 2\nif x == 1:\n    print('A')\nelif x == 2:\n    print('B')\nelse:\n    print('C')",o:["A","B","C","لا يظهر شيء"],a:1,e:"قيمة x تساوي 2، لذلك يُنفذ فرع elif."},
+{q:"يمكن استخدام جملة شرطية داخل جملة شرطية أخرى في بايثون.",o:["صح","خطأ"],a:0,e:"تُسمى هذه الجمل بالجمل الشرطية المتداخلة."}
+];
+const $=id=>document.getElementById(id);
+let studentName="",studentClass="";
+function renderQuestions(){
+  $("questions").innerHTML=qs.map((q,i)=>`<div class="question"><div class="qtitle">${i+1}. ${q.q.replace(/</g,"&lt;").replace(/>/g,"&gt;")}</div>${q.o.map((opt,j)=>`<label class="option"><input type="radio" name="q${i}" value="${j}" required><span>${opt.replace(/</g,"&lt;").replace(/>/g,"&gt;")}</span></label>`).join("")}</div>`).join("");
+}
+$("startBtn").addEventListener("click",()=>{
+ studentName=$("studentName").value.trim(); studentClass=$("studentClass").value.trim();
+ if(!studentName||!studentClass){alert("يرجى كتابة اسم الطالب والفصل.");return;}
+ $("identity").classList.add("hidden");$("quiz").classList.remove("hidden");
+ $("studentInfo").textContent=`الطالب: ${studentName} — الفصل: ${studentClass}`;
+ renderQuestions();window.scrollTo({top:0,behavior:"smooth"});
+});
+$("quizForm").addEventListener("submit",e=>{
+ e.preventDefault();let score=0,detail="";
+ qs.forEach((q,i)=>{
+  const picked=document.querySelector(`input[name="q${i}"]:checked`);
+  const val=picked?Number(picked.value):-1;const ok=val===q.a;if(ok)score++;
+  detail+=`<div class="feedback"><div>${i+1}. ${q.q.replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/\n/g,"<br>")}</div><div class="${ok?'correct':'wrong'}">${ok?'إجابة صحيحة ✓':'إجابة غير صحيحة'}</div><div>الإجابة الصحيحة: <strong>${q.o[q.a]}</strong></div><div class="small">${q.e}</div></div>`;
+ });
+ $("quiz").classList.add("hidden");$("results").classList.remove("hidden");
+ let msg=score===10?"ممتاز! أحسنت في جميع الأسئلة.":score>=7?"أحسنت! راجع الأسئلة التي أخطأت فيها.":score>=5?"عمل جيد، واصل المراجعة والتدريب.":"راجع الدرس ثم حاول التدريب مرة أخرى.";
+ $("results").innerHTML=`<div class="result"><h2>نتيجة الاختبار</h2><div class="score">${score} / 10</div><p><strong>اسم الطالب:</strong> ${escapeHtml(studentName)}</p><p><strong>الفصل:</strong> ${escapeHtml(studentClass)}</p><p>${msg}</p></div><h2>التصحيح والإجابات الصحيحة</h2>${detail}<button class="secondary" id="printBtn" type="button">طباعة النتيجة</button><button id="againBtn" type="button">بدء محاولة جديدة</button>`;
+ $("printBtn").addEventListener("click",()=>window.print());
+ $("againBtn").addEventListener("click",()=>location.reload());
+ window.scrollTo({top:0,behavior:"smooth"});
+});
+function escapeHtml(s){return s.replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+</script>
+</body>
+</html>
