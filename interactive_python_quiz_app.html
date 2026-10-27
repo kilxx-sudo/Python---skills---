@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>اختبار تفاعلي: القوائم وصفوف البيانات - بايثون</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Cairo & Fira Code for Python Code snippets -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Fira+Code:wght@400;600&display=swap" rel="stylesheet">
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Cairo', 'sans-serif'],
+            mono: ['Fira Code', 'monospace']
+          },
+          colors: {
+            pyblue: '#306998',
+            pyyellow: '#FFD43B',
+            pyteal: '#0d9488'
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+      min-height: 100vh;
+      color: #f8fafc;
+    }
+    .code-font {
+      font-family: 'Fira Code', monospace;
+      direction: ltr;
+      display: inline-block;
+    }
+    .custom-card {
+      background: rgba(30, 41, 59, 0.75);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .option-btn {
+      transition: all 0.2s ease-in-out;
+    }
+    .option-btn:hover {
+      transform: translateY(-2px);
+    }
+  </style>
+</head>
+<body class="font-sans antialiased pb-12">
+
+  <!-- Main Container -->
+  <div class="max-w-4xl mx-auto px-4 py-8">
+
+    <!-- Header Banner -->
+    <header class="custom-card rounded-2xl p-6 mb-8 text-center relative overflow-hidden shadow-2xl border-t-4 border-pyyellow">
+      <div class="absolute -right-10 -top-10 opacity-10 text-8xl text-pyyellow pointer-events-none">
+        <i class="fa-brands fa-python"></i>
+      </div>
+      <div class="inline-flex items-center gap-2 bg-pyblue/30 text-blue-300 px-4 py-1.5 rounded-full text-sm font-bold mb-3 border border-pyblue/50">
+        <i class="fa-solid fa-graduation-cap"></i> الصف الثالث المتوسط - المهارات الرقمية
+      </div>
+      <h1 class="text-2xl sm:text-3xl font-extrabold text-white mb-2 leading-tight">
+        اختبار تفاعلي: القوائم وصفوف البيانات <span class="text-pyyellow code-font">(Lists &amp; Tuples)</span>
+      </h1>
+      <p class="text-slate-300 text-sm sm:text-base max-w-2xl mx-auto">
+        اختبر معلوماتك ومهاراتك البرمجية في التعامل مع هيكلة البيانات بلغة بايثون
+      </p>
+    </header>
+
+    <!-- Student Name Card (Start View) -->
+    <div id="startCard" class="custom-card rounded-2xl p-8 mb-8 shadow-xl text-center">
+      <div class="w-16 h-16 bg-gradient-to-tr from-pyblue to-cyan-500 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl text-white shadow-lg">
+        <i class="fa-solid fa-user-pen"></i>
+      </div>
+      <h2 class="text-xl font-bold mb-2">أهلاً بك يا بطل البرمجة! 🚀</h2>
+      <p class="text-slate-300 text-sm mb-6">يرجى إدخال اسمك الرباعي وفصلك للبدء في حل الاختبار التفاعلي</p>
+      
+      <div class="max-w-md mx-auto space-y-4">
+        <div>
+          <label for="studentName" class="block text-right text-sm font-semibold mb-1 text-slate-300">اسم الطالب / الطالبة:</label>
+          <input type="text" id="studentName" placeholder="مثال: أحمد عبد الله العتيبي" class="w-full px-4 py-3 rounded-xl bg-slate-900/80 border border-slate-700 text-white focus:outline-none focus:border-pyyellow transition-all">
+        </div>
+        <div>
+          <label for="studentClass" class="block text-right text-sm font-semibold mb-1 text-slate-300">الفصل:</label>
+          <input type="text" id="studentClass" placeholder="مثال: ثالث / 1" class="w-full px-4 py-3 rounded-xl bg-slate-900/80 border border-slate-700 text-white focus:outline-none focus:border-pyyellow transition-all">
+        </div>
+        <button onclick="startQuiz()" class="w-full py-3.5 bg-gradient-to-r from-pyblue to-teal-600 hover:from-blue-600 hover:to-teal-500 text-white font-bold rounded-xl shadow-lg transform active:scale-95 transition-all text-lg mt-2">
+          بدء الاختبار التفاعلي <i class="fa-solid fa-arrow-left mr-2"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Quiz Form (Hidden initially) -->
+    <form id="quizForm" class="hidden space-y-8" onsubmit="event.preventDefault(); submitQuiz();">
+
+      <!-- Student Badge Header -->
+      <div class="custom-card rounded-xl p-4 flex justify-between items-center border-r-4 border-teal-500">
+        <div>
+          <span class="text-xs text-slate-400 block">الطالب الحالي:</span>
+          <span id="displayStudentInfo" class="font-bold text-teal-300"></span>
+        </div>
+        <div class="text-left">
+          <span class="text-xs text-slate-400 block">الدرجة الكلية:</span>
+          <span class="font-extrabold text-pyyellow">7 درجات</span>
+        </div>
+      </div>
+
+      <!-- SECTION 1: Multiple Choice -->
+      <div class="custom-card rounded-2xl p-6 sm:p-8 shadow-xl">
+        <div class="flex items-center gap-3 border-b border-slate-700/60 pb-4 mb-6">
+          <span class="w-8 h-8 rounded-lg bg-pyblue text-white flex items-center justify-center font-bold">1</span>
+          <div>
+            <h2 class="text-lg font-bold text-white">السؤال الأول: اختر الإجابة الصحيحة</h2>
+            <p class="text-xs text-slate-400">5 فقرات - لكل فقرة 0.5 درجة (المجموع: 2.5 درجة)</p>
+          </div>
+        </div>
+
+        <div class="space-y-8">
+          <!-- Q1.1 -->
+          <div class="question-block bg-slate-900/40 p-5 rounded-xl border border-slate-800">
+            <p class="font-bold text-slate-200 mb-3 text-base">
+              1.1 أي من الرموز التالية يُستخدم لتعريف القائمة <span class="code-font text-pyyellow">(List)</span> في لغة بايثون؟
+            </p>
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              <label class="option-btn p-3 rounded-lg bg-slate-800 border border-slate-700 cursor-pointer flex items-center justify-center gap-2 hover:border-pyyellow">
+                <input type="radio" name="q1_1" value="a" class="accent-pyyellow">
+                <span class="code-font font-bold text-lg text-slate-300">( )</span>
+              </label>
+              <label class="option-btn p-3 rounded-lg bg-slate-800 border border-slate-700 cursor-pointer flex items-center justify-center gap-2 hover:border-pyyellow">
+                <input type="radio" name="q1_1" value="b" class="accent-pyyellow">
+                <span class="code-font font-bold text-lg text-emerald-400">[ ]</span>
+              </label>
+              <label class="option-btn p-3 rounded-lg bg-slate-800 border border-slate-700 cursor-pointer flex items-center justify-center gap-2 hover:border-pyyellow">
+                <input type="radio" name="q1_1" value="c" class="accent-pyyellow">
+                <span class="code-font font-bold text-lg text-slate-300">{ }</span>
+              </label>
+              <label class="option-btn p-3 rounded-lg bg-slate-800 border border-slate-700 cursor-pointer flex items-center justify-center gap-2 hover:border-pyyellow">
+                <input type="radio" name="q1_1" value="d" class="accent-pyyellow">
+                <span class="code-font font-bold text-lg text-slate-300">&lt; &gt;</span>
+              </label>
+            </div>
+            <div id="feedback_q1_1" class="mt-3 text-xs hidden"></div>
+          </div>
+
+          <!-- Q1.2 -->
+          <div class="question-block bg-slate-900/40 p-5 rounded-xl border border-slate-800">
+            <p class="font-bold text-slate-200 mb-3 text-base">
+              1.2 الفرق الأساسي بين القائمة <span class="code-font text-pyyellow">(List)</span> وصف البيانات <span class="code-font text-pyyellow">(Tuple)</span> هو أن صف البيانات:
+            </p>
+            <div class="space-y-2">
+              <label class="option-btn p-3 rounded-lg bg-slate-800 border border-slate-700 cursor-pointer flex items-center gap-3 hover:border-pyyellow">
+                <input type="radio" name="q1_2" value="a" class="accent-pyyellow">
+                <span class="text-sm">أ) قابل للتعديل والإضافة بعد إنشائه (Mutable)</span>
+              </label>
+              <label class="option-btn p-3 rounded-lg bg-slate-800 border border-slate-700 cursor-pointer flex items-center gap-3 hover:border-pyyellow">
+                <input type="radio" name="q1_2" value="b" class="accent-pyyellow">
+                <span class="text-sm text-emerald-300 font-semibold">ب) غير قابل للتعديل بعد إنشائه (Immutable)</span>
+              </label>
+              <label class="option-btn p-3 rounded-lg bg-slate-800 border border-slate-700 cursor-pointer flex items-center gap-3 hover:border-pyyellow">
+                <input type="radio" name="q1_2" value="c" class="accent-pyyellow">
+                <span class="text-sm">ج) يخزن النصوص فقط دون الأرقام</span>
+              </label>
+              <label class="option-btn p-3 rounded-lg bg-slate-800 border border-slate-700 cursor-pointer flex items-center gap-3 hover:border-pyyellow">
+                <input type="radio" name="q1_2" value="d" class="accent-pyyellow">
+                <span class="text-sm">د) لا يمكن الوصول لعناصره بالدليل الرقمي</span>
+              </label>
+            </div>
+            <div id="feedback_q1_2" class="mt-3 text-xs hidden"></div>
+          </div>
+
+          <!-- Q1.3 -->
+          <div class="question-block bg-slate-900/40 p-5 rounded-xl border border-slate-800">
+            <p class="font-bold text-slate-200 mb-3 text-base">
+              1.3 لإضافة عنصر جديد في نهاية القائمة، ما هي الدالة البرمجية المستخدمة؟
+            </p>
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              <label class="option-btn p-3 rounded-lg bg-slate-800 border border-slate-700 cursor-pointer flex items-center justify-center gap-2 hover:border-pyyellow">
+                <input type="radio" name="q1_3" value="a" class="accent-pyyellow">
+                <span class="code-font text-sm text-emerald-400 font-bold">append()</span>
+              </label>
+              <label class="option-btn p-3 rounded-lg bg-slate-800 border border-slate-700 cursor-pointer flex items-center justify-center gap-2 hover:border-pyyellow">
+                <input type="radio" name="q1_3" value="b" class="accent-pyyellow">
+                <span class="code-font text-sm text-slate-300">remove()</span>
+              </label>
+              <label class="option-btn p-3 rounded-lg bg-slate-800 border border-slate-700 cursor-pointer flex items-center justify-center gap-2 hover:border-pyyellow">
+                <input type="radio" name="q1_3" value="c" class="accent-pyyellow">
+                <span class="code-font text-sm text-slate-300">pop()</span>
+              </label>
+              <label class="option-btn p-3 rounded-lg bg-slate-800 border border-slate-700 cursor-pointer flex items-center justify-center gap-2 hover:border-pyyellow">
+                <input type="radio" name="q1_3" value="d" class="accent-pyyellow">
+                <span class="code-font text-sm text-slate-300">sort()</span>
+              </label>
+            </div>
+            <div id="feedback_q1_3" class="mt-3 text-xs hidden"></div>
+          </div>
+
+          <!-- Q1.4 -->
+          <div class="question-block bg-slate-900/40 p-5 rounded-xl border border-slate-800">
+            <p class="font-bold text-slate-200 mb-3 text-base">
+              1.4 ما هي الدالة التي تُستخدم لمعرفة عدد العناصر الكلي داخل القائمة أو صف البيانات؟
+            </p>
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              <label class="option-btn p-3 rounded-lg bg-slate-800 border border-slate-700 cursor-pointer flex items-center justify-center gap-2 hover:border-pyyellow">
+                <input type="radio" name="q1_4" value="a" class="accent-pyyellow">
+                <span class="code-font text-sm text-slate-300">count()</span>
+              </label>
+              <label class="option-btn p-3 rounded-lg bg-slate-800 border border-slate-700 cursor-pointer flex items-center justify-center gap-2 hover:border-pyyellow">
+                <input type="radio" name="q1_4" value="b" class="accent-pyyellow">
+                <span class="code-font text-sm text-slate-300">size()</span>
+              </label>
+              <label class="option-btn p-3 rounded-lg bg-slate-800 border border-slate-700 cursor-pointer flex items-center justify-center gap-2 hover:border-pyyellow">
+                <input type="radio" name="q1_4" value="c" class="accent-pyyellow">
+                <span class="code-font text-sm text-emerald-400 font-bold">len()</span>
+              </label>
+              <label class="option-btn p-3 rounded-lg bg-slate-800 border border-slate-700 cursor-pointer flex items-center justify-center gap-2 hover:border-pyyellow">
+                <input type="radio" name="q1_4" value="d" class="accent-pyyellow">
+                <span class="code-font text-sm text-slate-300">max()</span>
+              </label>
+            </div>
+            <div id="feedback_q1_4" class="mt-3 text-xs hidden"></div>
+          </div>
+
+          <!-- Q1.5 -->
+          <div class="question-block bg-slate-900/40 p-5 rounded-xl border border-slate-800">
+            <p class="font-bold text-slate-200 mb-3 text-base">
+              1.5 إذا كانت القائمة: <span class="code-font bg-slate-950 px-2 py-1 rounded text-pyyellow text-sm">fruits = ["تفاح", "موز", "برتقال"]</span>، فما هي نتيجة تنفيذ <span class="code-font text-teal-300">fruits[1]</span>؟
+            </p>
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              <label class="option-btn p-3 rounded-lg bg-slate-800 border border-slate-700 cursor-pointer flex items-center justify-center gap-2 hover:border-pyyellow">
+                <input type="radio" name="q1_5" value="a" class="accent-pyyellow">
+                <span class="text-sm font-semibold text-slate-300">تفاح</span>
+              </label>
+              <label class="option-btn p-3 rounded-lg bg-slate-800 border border-slate-700 cursor-pointer flex items-center justify-center gap-2 hover:border-pyyellow">
+                <input type="radio" name="q1_5" value="b" class="accent-pyyellow">
+                <span class="text-sm font-semibold text-emerald-400">موز</span>
+              </label>
+              <label class="option-btn p-3 rounded-lg bg-slate-800 border border-slate-700 cursor-pointer flex items-center justify-center gap-2 hover:border-pyyellow">
+                <input type="radio" name="q1_5" value="c" class="accent-pyyellow">
+                <span class="text-sm font-semibold text-slate-300">برتقال</span>
+              </label>
+              <label class="option-btn p-3 rounded-lg bg-slate-800 border border-slate-700 cursor-pointer flex items-center justify-center gap-2 hover:border-pyyellow">
+                <input type="radio" name="q1_5" value="d" class="accent-pyyellow">
+                <span class="text-sm font-semibold text-slate-300">خطأ برلمجي</span>
+              </label>
+            </div>
+            <div id="feedback_q1_5" class="mt-3 text-xs hidden"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SECTION 2: True / False -->
+      <div class="custom-card rounded-2xl p-6 sm:p-8 shadow-xl">
+        <div class="flex items-center gap-3 border-b border-slate-700/60 pb-4 mb-6">
+          <span class="w-8 h-8 rounded-lg bg-teal-600 text-white flex items-center justify-center font-bold">2</span>
+          <div>
+            <h2 class="text-lg font-bold text-white">السؤال الثاني: ضع علامة (صح) أو (خطأ)</h2>
+            <p class="text-xs text-slate-400">5 فقرات - لكل فقرة 0.5 درجة (المجموع: 2.5 درجة)</p>
+          </div>
+        </div>
+
+        <div class="space-y-6">
+          <!-- Q2.1 -->
+          <div class="question-block bg-slate-900/40 p-4 rounded-xl border border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <span class="text-sm font-semibold text-slate-200">
+              2.1 يبدأ دليل العناصر <span class="code-font text-pyyellow">(Index)</span> في القوائم وصفوف البيانات دائماً من الرقم <span class="code-font text-teal-300">0</span>.
+            </span>
+            <div class="flex gap-3 shrink-0">
+              <label class="px-4 py-2 rounded-lg bg-slate-800 border border-slate-700 cursor-pointer flex items-center gap-2 hover:border-emerald-500">
+                <input type="radio" name="q2_1" value="true" class="accent-emerald-500">
+                <span class="text-sm font-bold text-emerald-400">صح ✓</span>
+              </label>
+              <label class="px-4 py-2 rounded-lg bg-slate-800 border border-slate-700 cursor-pointer flex items-center gap-2 hover:border-rose-500">
+                <input type="radio" name="q2_1" value="false" class="accent-rose-500">
+                <span class="text-sm font-bold text-rose-400">خطأ ✗</span>
+              </label>
+            </div>
+          </div>
+          <div id="feedback_q2_1" class="text-xs hidden -mt-4 mr-2"></div>
+
+          <!-- Q2.2 -->
+          <div class="question-block bg-slate-900/40 p-4 rounded-xl border border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <span class="text-sm font-semibold text-slate-200">
+              2.2 نستخدم الأقواس الهلالية <span class="code-font text-pyyellow">( )</span> لتعريف صف البيانات <span class="code-font text-pyyellow">(Tuple)</span>.
+            </span>
+            <div class="flex gap-3 shrink-0">
+              <label class="px-4 py-2 rounded-lg bg-slate-800 border border-slate-700 cursor-pointer flex items-center gap-2 hover:border-emerald-500">
+                <input type="radio" name="q2_2" value="true" class="accent-emerald-500">
+                <span class="text-sm font-bold text-emerald-400">صح ✓</span>
+              </label>
+              <label class="px-4 py-2 rounded-lg bg-slate-800 border border-slate-700 cursor-pointer flex items-center gap-2 hover:border-rose-500">
+                <input type="radio" name="q2_2" value="false" class="accent-rose-500">
+                <span class="text-sm font-bold text-rose-400">خطأ ✗</span>
+              </label>
+            </div>
+          </div>
+          <div id="feedback_q2_2" class="text-xs hidden -mt-4 mr-2"></div>
+
+          <!-- Q2.3 -->
+          <div class="question-block bg-slate-900/40 p-4 rounded-xl border border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <span class="text-sm font-semibold text-slate-200">
+              2.3 تتيح القوائم تخزين عناصر من أنواع بيانات مختلفة (نصوص، أرقام) معاً في نفس القائمة.
+            </span>
+            <div class="flex gap-3 shrink-0">
+              <label class="px-4 py-2 rounded-lg bg-slate-800 border border-slate-700 cursor-pointer flex items-center gap-2 hover:border-emerald-500">
+                <input type="radio" name="q2_3" value="true" class="accent-emerald-500">
+                <span class="text-sm font-bold text-emerald-400">صح ✓</span>
+              </label>
+              <label class="px-4 py-2 rounded-lg bg-slate-800 border border-slate-700 cursor-pointer flex items-center gap-2 hover:border-rose-500">
+                <input type="radio" name="q2_3" value="false" class="accent-rose-500">
+                <span class="text-sm font-bold text-rose-400">خطأ ✗</span>
+              </label>
+            </div>
+          </div>
+          <div id="feedback_q2_3" class="text-xs hidden -mt-4 mr-2"></div>
+
+          <!-- Q2.4 -->
+          <div class="question-block bg-slate-900/40 p-4 rounded-xl border border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <span class="text-sm font-semibold text-slate-200">
+              2.4 الدالة <span class="code-font text-pyyellow">remove()</span> تُستخدم لحذف جميع عناصر القائمة دفعة واحدة.
+            </span>
+            <div class="flex gap-3 shrink-0">
+              <label class="px-4 py-2 rounded-lg bg-slate-800 border border-slate-700 cursor-pointer flex items-center gap-2 hover:border-emerald-500">
+                <input type="radio" name="q2_4" value="true" class="accent-emerald-500">
+                <span class="text-sm font-bold text-emerald-400">صح ✓</span>
+              </label>
+              <label class="px-4 py-2 rounded-lg bg-slate-800 border border-slate-700 cursor-pointer flex items-center gap-2 hover:border-rose-500">
+                <input type="radio" name="q2_4" value="false" class="accent-rose-500">
+                <span class="text-sm font-bold text-rose-400">خطأ ✗</span>
+              </label>
+            </div>
+          </div>
+          <div id="feedback_q2_4" class="text-xs hidden -mt-4 mr-2"></div>
+
+          <!-- Q2.5 -->
+          <div class="question-block bg-slate-900/40 p-4 rounded-xl border border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <span class="text-sm font-semibold text-slate-200">
+              2.5 الدليل السالب مثل <span class="code-font text-pyyellow">my_list[-1]</span> يُشير دائماً إلى العنصر الأخير في القائمة.
+            </span>
+            <div class="flex gap-3 shrink-0">
+              <label class="px-4 py-2 rounded-lg bg-slate-800 border border-slate-700 cursor-pointer flex items-center gap-2 hover:border-emerald-500">
+                <input type="radio" name="q2_5" value="true" class="accent-emerald-500">
+                <span class="text-sm font-bold text-emerald-400">صح ✓</span>
+              </label>
+              <label class="px-4 py-2 rounded-lg bg-slate-800 border border-slate-700 cursor-pointer flex items-center gap-2 hover:border-rose-500">
+                <input type="radio" name="q2_5" value="false" class="accent-rose-500">
+                <span class="text-sm font-bold text-rose-400">خطأ ✗</span>
+              </label>
+            </div>
+          </div>
+          <div id="feedback_q2_5" class="text-xs hidden -mt-4 mr-2"></div>
+        </div>
+      </div>
+
+      <!-- SECTION 3: Short Code Input -->
+      <div class="custom-card rounded-2xl p-6 sm:p-8 shadow-xl">
+        <div class="flex items-center gap-3 border-b border-slate-700/60 pb-4 mb-6">
+          <span class="w-8 h-8 rounded-lg bg-purple-600 text-white flex items-center justify-center font-bold">3</span>
+          <div>
+            <h2 class="text-lg font-bold text-white">السؤال الثالث: كتابة الأوامر البرمجية التطبيقية</h2>
+            <p class="text-xs text-slate-400">فقرتان - لكل فقرة 1 درجة (المجموع: درجتان)</p>
+          </div>
+        </div>
+
+        <div class="space-y-6">
+          <!-- Q3.1 -->
+          <div class="question-block bg-slate-900/40 p-5 rounded-xl border border-slate-800">
+            <label for="q3_1" class="block font-bold text-slate-200 mb-2 text-sm leading-relaxed">
+              3.1 اكتب أمراً برمجياً بلغتك بايثون لإنشاء قائمة <span class="code-font text-pyyellow">(List)</span> باسم <span class="code-font text-emerald-400">students</span> تحتوي على أسماء ثلاثة طلاب من اختيارك:
+            </label>
+            <input type="text" id="q3_1" placeholder='مثال: students = ["أحمد", "عمر", "علي"]' class="code-font w-full px-4 py-3 rounded-xl bg-slate-950 border border-slate-700 text-pyyellow focus:outline-none focus:border-purple-500 text-sm dir-ltr">
+            <p class="text-xs text-slate-400 mt-1">💡 تذكر استخدام اسم المتغير، وعلامة =، والأقواس المربعة [ ].</p>
+            <div id="feedback_q3_1" class="mt-3 text-xs hidden"></div>
+          </div>
+
+          <!-- Q3.2 -->
+          <div class="question-block bg-slate-900/40 p-5 rounded-xl border border-slate-800">
+            <label for="q3_2" class="block font-bold text-slate-200 mb-2 text-sm leading-relaxed">
+              3.2 اكتب الأمر البرمجي المستخدم لحذف العنصر <span class="code-font text-pyyellow">"موز"</span> من القائمة التالية:<br>
+              <span class="code-font text-teal-300 block my-1">fruits = ["تفاح", "موز", "برتقال"]</span>
+            </label>
+            <input type="text" id="q3_2" placeholder='مثال: fruits.remove("موز")' class="code-font w-full px-4 py-3 rounded-xl bg-slate-950 border border-slate-700 text-pyyellow focus:outline-none focus:border-purple-500 text-sm dir-ltr">
+            <div id="feedback_q3_2" class="mt-3 text-xs hidden"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Submit Button -->
+      <div class="text-center pt-4">
+        <button type="submit" class="px-10 py-4 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-extrabold rounded-2xl shadow-xl transform active:scale-95 transition-all text-xl">
+          إنهاء وإرسال الاختبار <i class="fa-solid fa-paper-plane mr-2"></i>
+        </button>
+      </div>
+
+    </form>
+
+    <!-- Results Card (Hidden initially) -->
+    <div id="resultCard" class="hidden custom-card rounded-2xl p-8 mb-8 shadow-2xl text-center animate-fade-in border-t-8 border-teal-500">
+      <div id="resultIcon" class="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl shadow-xl"></div>
+      
+      <h2 id="resultTitle" class="text-2xl font-extrabold mb-1"></h2>
+      <p id="resultStudent" class="text-slate-300 text-sm mb-6"></p>
+
+      <!-- Score Box -->
+      <div class="max-w-xs mx-auto bg-slate-900/90 rounded-2xl p-6 border border-slate-700 mb-6 shadow-inner">
+        <span class="text-xs text-slate-400 font-semibold uppercase block mb-1">النتيجة النهائية</span>
+        <div id="scoreDisplay" class="text-4xl font-black text-pyyellow my-1"></div>
+        <div id="percentageDisplay" class="text-sm font-bold text-slate-300"></div>
+      </div>
+
+      <div id="resultFeedbackText" class="text-sm text-slate-200 mb-8 max-w-lg mx-auto leading-relaxed"></div>
+
+      <div class="flex flex-col sm:flex-row justify-center gap-4">
+        <button onclick="reviewAnswers()" class="px-6 py-3 bg-slate-800 hover:bg-slate-700 text-white font-bold rounded-xl border border-slate-600 transition-all text-sm">
+          <i class="fa-solid fa-magnifying-glass mr-2"></i> مراجعة الإجابات والشرح
+        </button>
+        <button onclick="resetQuiz()" class="px-6 py-3 bg-gradient-to-r from-pyblue to-teal-600 hover:from-blue-600 hover:to-teal-500 text-white font-bold rounded-xl shadow-lg transition-all text-sm">
+          <i class="fa-solid fa-rotate-right mr-2"></i> إعادة محاولة الاختبار
+        </button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- JavaScript App Logic -->
+  <script>
+    let studentNameData = "";
+    let studentClassData = "";
+
+    function startQuiz() {
+      const nameInput = document.getElementById('studentName').value.trim();
+      const classInput = document.getElementById('studentClass').value.trim();
+
+      if (!nameInput) {
+        alert('يرجى إدخال اسم الطالب للبدء.');
+        return;
+      }
+
+      studentNameData = nameInput;
+      studentClassData = classInput || "ثالث متوسط";
+
+      document.getElementById('displayStudentInfo').innerText = `${studentNameData} (${studentClassData})`;
+      document.getElementById('startCard').classList.add('hidden');
+      document.getElementById('quizForm').classList.remove('hidden');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function submitQuiz() {
+      let score = 0;
+      const totalScore = 7;
+
+      // Answers Key
+      // Q1.1 -> b
+      // Q1.2 -> b
+      // Q1.3 -> a
+      // Q1.4 -> c
+      // Q1.5 -> b
+
+      // Q2.1 -> true
+      // Q2.2 -> true
+      // Q2.3 -> true
+      // Q2.4 -> false
+      // Q2.5 -> true
+
+      // Q1 Evaluation
+      const q1_1 = document.querySelector('input[name="q1_1"]:checked')?.value;
+      if (q1_1 === 'b') score += 0.5;
+      showFeedback('q1_1', q1_1 === 'b', 'الإجابة الصحيحة هي [ ] المربّعة للقوائم.', 'الرمز [ ] هو المخصص للقوائم.');
+
+      const q1_2 = document.querySelector('input[name="q1_2"]:checked')?.value;
+      if (q1_2 === 'b') score += 0.5;
+      showFeedback('q1_2', q1_2 === 'b', 'الإجابة الصحيحة هي: غير قابل للتعديل بعد إنشائه (Immutable).', 'Tuple يتميز بأنه ثابت ولا ينعدل بعد إنشائه.');
+
+      const q1_3 = document.querySelector('input[name="q1_3"]:checked')?.value;
+      if (q1_3 === 'a') score += 0.5;
+      showFeedback('q1_3', q1_3 === 'a', 'الإجابة الصحيحة هي append().', 'الدالة append() تظيف عنصراً دائماً لنهاية القائمة.');
+
+      const q1_4 = document.querySelector('input[name="q1_4"]:checked')?.value;
+      if (q1_4 === 'c') score += 0.5;
+      showFeedback('q1_4', q1_4 === 'c', 'الإجابة الصحيحة هي len().', 'الدالة len() تعيد طول القائمة أو الصف.');
+
+      const q1_5 = document.querySelector('input[name="q1_5"]:checked')?.value;
+      if (q1_5 === 'b') score += 0.5;
+      showFeedback('q1_5', q1_5 === 'b', 'الإجابة الصحيحة هي "موز" لأن الترقيم يبدأ من 0.', 'fruits[0] = تفاح ، fruits[1] = موز.');
+
+      // Q2 Evaluation
+      const q2_1 = document.querySelector('input[name="q2_1"]:checked')?.value;
+      if (q2_1 === 'true') score += 0.5;
+      showFeedback('q2_1', q2_1 === 'true', 'عبارة صحيحة ✓ (يبدأ الفهرس دائماً من الرقم صفر).', 'نعم، الترقيم يبدأ من 0.');
+
+      const q2_2 = document.querySelector('input[name="q2_2"]:checked')?.value;
+      if (q2_2 === 'true') score += 0.5;
+      showFeedback('q2_2', q2_2 === 'true', 'عبارة صحيحة ✓ (نعم الأقواس الهلالية ( ) لـ Tuple).', 'تُنشأ صفوف البيانات باستخدام ( ).');
+
+      const q2_3 = document.querySelector('input[name="q2_3"]:checked')?.value;
+      if (q2_3 === 'true') score += 0.5;
+      showFeedback('q2_3', q2_3 === 'true', 'عبارة صحيحة ✓ (تستوعب القائمة أنواعاً متعددة).', 'يمكن جمع النصوص والأرقام في نفس القائمة.');
+
+      const q2_4 = document.querySelector('input[name="q2_4"]:checked')?.value;
+      if (q2_4 === 'false') score += 0.5;
+      showFeedback('q2_4', q2_4 === 'false', 'عبارة خاطئة ✗ (الدالة remove لحذف عنصر محدد وليس الكل، بينما clear() لحذف الكل).', 'remove() تحذف أول عنصر يطابق القيمة المقترحة فقط.');
+
+      const q2_5 = document.querySelector('input[name="q2_5"]:checked')?.value;
+      if (q2_5 === 'true') score += 0.5;
+      showFeedback('q2_5', q2_5 === 'true', 'عبارة صحيحة ✓ (الدليل السالب -1 يشير للعنصر الأخير دائماً).', 'الفهرس -1 يعود للعنصر الأخير.');
+
+      // Q3 Evaluation (Code Parsing)
+      const q3_1_val = document.getElementById('q3_1').value.trim();
+      const q3_1_valid = isValidListSyntax(q3_1_val);
+      if (q3_1_valid) score += 1;
+      showFeedback('q3_1', q3_1_valid, 'صيغة صحيحة مثل: students = ["أحمد", "عمر", "علي"]', 'تأكد من كتابة اسم المتغير والأقواس المربعة [ ].');
+
+      const q3_2_val = document.getElementById('q3_2').value.trim();
+      const q3_2_valid = (q3_2_val.includes('fruits.remove') && (q3_2_val.includes('"موز"') || q3_2_val.includes("'موز'")));
+      if (q3_2_valid) score += 1;
+      showFeedback('q3_2', q3_2_valid, 'الأمر الصحيح هو: fruits.remove("موز")', 'نستخدم اسم القائمة متبوعاً بـ .remove("موز").');
+
+      // Display Results
+      displayFinalResult(score, totalScore);
+    }
+
+    function isValidListSyntax(str) {
+      if (!str) return false;
+      const clean = str.replace(/\s+/g, '');
+      // Check if starts with students= and has []
+      return (clean.startsWith('students=') || clean.includes('=[')) && clean.includes('[') && clean.includes(']');
+    }
+
+    function showFeedback(elementId, isCorrect, correctText, exp) {
+      const fb = document.getElementById(`feedback_${elementId}`);
+      if (!fb) return;
+
+      fb.classList.remove('hidden');
+      if (isCorrect) {
+        fb.className = "mt-2 p-2.5 rounded-lg bg-emerald-950/80 border border-emerald-500/50 text-emerald-300 text-xs flex items-center gap-2";
+        fb.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-400"></i> <span><strong>إجابة صحيحة!</strong> ${exp}</span>`;
+      } else {
+        fb.className = "mt-2 p-2.5 rounded-lg bg-rose-950/80 border border-rose-500/50 text-rose-300 text-xs flex items-center gap-2";
+        fb.innerHTML = `<i class="fa-solid fa-circle-xmark text-rose-400"></i> <span><strong>إجابة خاطئة!</strong> ${correctText}</span>`;
+      }
+    }
+
+    function displayFinalResult(score, totalScore) {
+      const percentage = Math.round((score / totalScore) * 100);
+      
+      document.getElementById('quizForm').classList.add('hidden');
+      const resultCard = document.getElementById('resultCard');
+      resultCard.classList.remove('hidden');
+
+      document.getElementById('resultStudent').innerText = `الطالب: ${studentNameData} | الفصل: ${studentClassData}`;
+      document.getElementById('scoreDisplay').innerText = `${score} / ${totalScore}`;
+      document.getElementById('percentageDisplay').innerText = `النسبة المئوية: ${percentage}%`;
+
+      const resultIcon = document.getElementById('resultIcon');
+      const resultTitle = document.getElementById('resultTitle');
+      const feedbackText = document.getElementById('resultFeedbackText');
+
+      if (percentage >= 90) {
+        resultIcon.className = "w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl shadow-xl bg-emerald-500/20 text-emerald-400 border-2 border-emerald-500";
+        resultIcon.innerHTML = `<i class="fa-solid fa-trophy"></i>`;
+        resultTitle.className = "text-2xl font-extrabold mb-1 text-emerald-400";
+        resultTitle.innerText = "ممتاز جداً! خبير بايثون 🌟";
+        feedbackText.innerText = "أداء استثنائي رائع يدل على استيعابك الكامل لمفاهيم القوائم وصفوف البيانات في بايثون. استمر في التميز والفرادة!";
+      } else if (percentage >= 70) {
+        resultIcon.className = "w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl shadow-xl bg-pyblue/30 text-cyan-400 border-2 border-cyan-500";
+        resultIcon.innerHTML = `<i class="fa-solid fa-award"></i>`;
+        resultTitle.className = "text-2xl font-extrabold mb-1 text-cyan-400";
+        resultTitle.innerText = "أحسنت! مستوى جيد جداً 👍";
+        feedbackText.innerText = "نتيجة طيبة جداً! لديك فهم قوي لمعظم المبادئ البرمجية، راجع الملاحظات البسيطة لتصبح مبرمجاً محترفاً.";
+      } else {
+        resultIcon.className = "w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl shadow-xl bg-amber-500/20 text-amber-400 border-2 border-amber-500";
+        resultIcon.innerHTML = `<i class="fa-solid fa-book-open"></i>`;
+        resultTitle.className = "text-2xl font-extrabold mb-1 text-amber-400";
+        resultTitle.innerText = "محاولة جيدة! تحتاح لمزيد من التدريب 📖";
+        feedbackText.innerText = "لا بأس يا بطل، فالبرمجة تتطلب الممارسة المستمرة. ننصحك بإعادة مراجعة درس القوائم وصفوف البيانات ثم إعادة المحاولة!";
+      }
+
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function reviewAnswers() {
+      document.getElementById('resultCard').classList.add('hidden');
+      document.getElementById('quizForm').classList.remove('hidden');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function resetQuiz() {
+      document.getElementById('quizForm').reset();
+      
+      // Hide all feedbacks
+      const feedbacks = document.querySelectorAll('[id^="feedback_"]');
+      feedbacks.forEach(fb => fb.classList.add('hidden'));
+
+      document.getElementById('resultCard').classList.add('hidden');
+      document.getElementById('startCard').classList.remove('hidden');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  </script>
+</body>
+</html>
